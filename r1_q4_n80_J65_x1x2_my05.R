@@ -192,7 +192,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
 #simulation
   print(paste0("ISIM= ",isim))
   L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1, missrate=0.5)$L1o
-  init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",r_prime)
+  init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",r_prime,col.clinic=1,col.trt=3,col.D=4,col.Y=2)
 
   init <- c(init.list$alpha.intercept.init, init.list$y.itt.est[2:length(init.list$y.itt.est)],
             init.list$C.init,
