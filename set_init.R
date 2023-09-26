@@ -120,9 +120,11 @@ set_init <- function(data,r,side=1,formula.c,formula.y,subname,method,r_prime, c
               estimatePC=P.c, y.itt.est=y.itt.est))
 }#end of function
 
-#set_init(L1o,r=r,side = 1,C~1+(1|clinic), Y~1+(1|clinic),"id","pmm",1)
-
-#set_init(data,side = 1,C~age.c+first.colon.order+gender+(1|clinic), Y~trt*marry+trt*first.colon.order+(1|clinic))
-
-#set_init(data, r=1, side = 1,C~x1+(1|clinic), Y~1+(1|clinic),"study_id")
+#Values
+#alpha.intercept.init = initial values for an, ac0, ac1
+#y.itt.est[2:length(y.itt.est)] = initial values for the coefficients for the covariates in Y model. the first element is intercept which is discarded in our case.
+#C.init = initial values for the coefficients in C model
+#lambda.init = initial values for lambda, factor loading matrix
+#tau.init = initial values for tau, site level variance of Y model
+#delta.init = initial values for delta, site level variance of C model
 
