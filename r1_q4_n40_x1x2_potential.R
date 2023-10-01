@@ -234,6 +234,9 @@ time1 <- Sys.time()
 for(isim in 1:nsim){
   print(paste0("sim= ", isim))
   L2 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L2
+  #L2 is a dataset with potential outcomes.
+  #L1o is a dataset with observed outcomes which doesn't include the outcomes from counterfactual scenario.
+  
   tryCatch({
   res <- glmer(Y~ -1 + I(1-Cc) + I((1-trt)*Cc) + I(trt*Cc)+x1+x2+(0+I(1-Cc) + I((1-trt)*Cc) + I(trt*Cc)|clinic), 
                data=L2, family=binomial)
