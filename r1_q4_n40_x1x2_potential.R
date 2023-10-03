@@ -5,7 +5,7 @@ rm(list=ls())
 
 library(lme4)
 library(reshape2)
-library(merDeriv) vcov()
+library(merDeriv) #vcov()
 
 source("VechToCovM.R")
 source("MtoVech.R")
@@ -214,9 +214,8 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
 } #end of function
 
 
-
-#simulation
 nsim=500
+
 #y model
 npar.y <- 12
 output_y <- matrix(NA,nrow = nsim,ncol=npar.y)
@@ -258,6 +257,7 @@ for(isim in 1:nsim){
 time2 <- Sys.time()
 print(time2-time1)
 
+# estimation
 for(isim in 1:nsim){
   print(paste0("sim= ", isim))
   L1 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L1
@@ -275,7 +275,7 @@ for(isim in 1:nsim){
 #2 sims did not converge
 
 #results
-#setwd("/Users/elly/Documents/VCU/RA/NR/eassist/incomplete/sim/2023-9-18")
+
 output <- cbind(output_y,output_c)
 SE <- cbind(SE_y, SE_c)
 write.csv(output,"output_potential_n40.csv", row.names = F)
