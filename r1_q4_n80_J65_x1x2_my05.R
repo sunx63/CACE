@@ -38,16 +38,18 @@ source("cace_1side_parallel_lambda.R")
 
 
 registerDoParallel(cores=40)
+# users can define how many cores available according to their machines. 
+# if the available cores < 40 or # specified in the above code, the machine will allocate what's avalable to the job.
 
 #simulation
 
-miu.etaT=0.2
-r=3
+miu.etaT=0.2 # P(T=1) \approx 0.5
+r=3 # for one-sided compliance, r=3
 Q=4
-S=1
-r_prime=1
-k=1
-n <- 80
+S=1 # never taker's random effect shared
+r_prime=1 # reduced dimension of random effects in Y model
+k=1 # for one-sided compliance, k=1
+n = 80 #n_j
 J=65
 niter=500
 tol <- 1e-04
@@ -58,9 +60,7 @@ lambda.true <- c(1,0.7,1.1)
 delta.true <- 0.3 #raise from 0.05
 tau.true <- 0.5 # raise from 0.2
 
-true <- c(alpha.true,gamma.true,lambda.true[2:3],tau.true, delta.true)
-
-#functuion to similate data
+#function to simulate data
 sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S, missrate){
   set.seed(seed)
   alpha <- alpha.true
@@ -189,21 +189,48 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   return(list(L1=L1,L1o=L1o)) #L1 is fully observed. L1o has missing data
 }
 
-#simulation
+
   print(paste0("ISIM= ",isim))
+  # isim is the loop id for simulations. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
+  # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
+  
   L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1, missrate=0.5)$L1o
+  #L1o is the dataset of a multisite trial with e-assist sample size with observed/incomplete compliance
+
   init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",r_prime,col.clinic=1,col.trt=3,col.D=4,col.Y=2)
+  # col.clinic, col.trt, col.D, col.Y are the column numbers of cluster ID, treatment assignment, treatment receipt/participation, outcome in the dataset
+  # side is 1 for one-sided noncompliance
+  # "id" is the subject level variable name. For this simulation, it is "id". Users need to adjust accordingly per their dataset.
+  # pmm is predictive mean matching, please use as default.
 
   init <- c(init.list$alpha.intercept.init, init.list$y.itt.est[2:length(init.list$y.itt.est)],
             init.list$C.init,
             init.list$lambda.init,
             init.list$tau.init,
             init.list$delta.init)
-  #initial values should be in this order: alpha, gamma, lambda, tau, delta
+  #Initial values should be in this order: alpha, gamma, lambda, tau, delta. Changing order will crash the program
   
   print(init)
+
+  # estimation
   res <- cace_1side_parallel_lambda(r=r,k=k,Q=4,J=J,L1o,x0=c("x1","x2"),x1=c("x1","x2"),init = init, col.clinic=1,col.trt=3,col.D=4,col.Y=2,
                                     niter=niter,tol=tol,Share=1,r_prime=1)
-
+  # r: full dimension of random effects in Y model. r=3 for one-sided noncompliance.
+  # k: full dimension of random effects in C model. k=1 for one-sided noncompliance.
+  # Q: number of abscissas for AGHQ
+  # J: number of sites
+  # data: dataset
+  # x0: covariates controlled in Y model
+  # x1: covariates controlled in C model
+  # init: intial values
+  # col.clinic: column# of site/cluster level variable
+  # col.trt: column# of treatment assignment
+  # col.D: column# of treatment receipt
+  # col.Y: column# of outcome
+  # niter: # of iteration. program will stop if reaches niter specified. 300 is enough for e-assist study.
+  # tol: tolerance for L2 norm. default is 10^-4
+  # S: sharing method. when r=1, S=1, 2, 3 means never taker's, control complier's and treatment complier's random effect is shared among three groups respectively
+  # r_prime: reduced dimension of random effects after sharing in Y model. when r=1, r_prime is 1, indicating one random effect is shared in Y model.
+  
   saveRDS(res,file = "r1my05_n80_J65_x1x2_isim.rds")
 
