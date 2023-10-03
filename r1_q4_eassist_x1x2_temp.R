@@ -34,16 +34,19 @@ source("set_init.R")
 source("cace_1side_parallel_lambda.R")
 
 registerDoParallel(cores=40)
+# users can define how many cores available according to their machines. 
+# if the available cores < 40 or # specified in the above code, the machine will allocate what's avalable to the job.
 
 #simulation
-miu.etaT=0.2
-r=3
+miu.etaT=0.2 # P(T=1) \approx 0.5
+r=3 # for one-sided compliance, r=3
 Q=4
-S=1
-r_prime=1
-k=1
-physician_order=readRDS("physician_order.rds")
-J=170
+S=1 # never taker's random effect shared
+r_prime=1 # reduced dimension of random effects in Y model
+k=1 # for one-sided compliance, k=1
+physician_order=readRDS("physician_order.rds") 
+#e-assist study sample size file, required for e-assist study simulation
+J=170 #sites
 niter=500
 tol <- 1e-04
 
@@ -192,15 +195,18 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
 }
 
 
-#simulation
-  print(paste0("ISIM= ",isim)) #isim is the loop id for simulation. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
+  print(paste0("ISIM= ",isim)) 
+  # isim is the loop id for simulations. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
+  # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
+
   L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, physician_order, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L1o
   #L1o is the dataset of a multisite trial with e-assist sample size with observed/incomplete compliance
-  
+
+  # Generate initial values for the following algorithm
   init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"ID","pmm",r_prime) #this is to generate the initial values
-  # side is one sided or two sided noncompliance
-  # ID is subject level variable
-  # pmm is predictive mean matching.
+  # side is 1 for one-sided noncompliance
+  # ID is the subject level variable name. For this simulation, it is "ID". Users need to adjust accordingly per their dataset.
+  # pmm is predictive mean matching, please use as default.
 
   
   init <- c(init.list$alpha.intercept.init, #initial values for an, ac0, ac1 in Y model, treatment effects of three compliance groups
@@ -213,11 +219,12 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   #Initial values should be in this order: alpha, gamma, lambda, tau, delta. Changing order will crash the program
   
   print(init)
-  
+
+  # estimation
   res <- cace_1side_parallel_lambda(r=r,k=k,Q=4,J=J,data=L1o,x0=c("x1","x2"),x1=c("x1","x2"),init = init, col.clinic=1,col.trt=3,col.D=4,col.Y=2, 
                                     niter=niter,tol=tol,S=1,r_prime=1)
-  # r: full dimension of random effects in Y model. it is 3 for one-sided noncompliance.
-  # k: full dimension of random effects in C model. it is 1 for one-sided noncompliance.
+  # r: full dimension of random effects in Y model. r=3 for one-sided noncompliance.
+  # k: full dimension of random effects in C model. k=1 for one-sided noncompliance.
   # Q: number of abscissas for AGHQ
   # J: number of sites
   # data: dataset
