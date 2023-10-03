@@ -203,10 +203,12 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   #L1o is the dataset of a multisite trial with e-assist sample size with observed/incomplete compliance
 
   # Generate initial values for the following algorithm
-  init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"ID","pmm",r_prime) #this is to generate the initial values
+  init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"ID","pmm",r_prime,col.clinic=1,col.trt=3,col.D=4,col.Y=2) 
+  # this is to generate the initial values
   # side is 1 for one-sided noncompliance
   # ID is the subject level variable name. For this simulation, it is "ID". Users need to adjust accordingly per their dataset.
   # pmm is predictive mean matching, please use as default.
+  # col.clinic, col.trt, col.D, col.Y are the column numbers of cluster ID, treatment assignment, treatment receipt/participation, outcome in the dataset
 
   
   init <- c(init.list$alpha.intercept.init, #initial values for an, ac0, ac1 in Y model, treatment effects of three compliance groups
