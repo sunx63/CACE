@@ -1,26 +1,26 @@
 
 #Main functions for estimating CACE with parallel computing
 #inputs
-#r: full dimension of random effects of Y model
-#k: full dimension of random effects of C model. k=1 for one-sided noncompliance
-#Q: number of abscissas for AGHQ
-#J: number of clusters/sites
-#x0: covariates controlled in Y model
-#x1: covariates controlled in C model
-#init: initial values for parameters
+#r: full dimension of random effects of Y model, numeric. r=3 for one-sided noncompliance
+#k: full dimension of random effects of C model, numeric. k=1 for one-sided noncompliance
+#Q: number of abscissas for AGHQ, numeric
+#J: number of clusters/sites, numeric
+#x0: covariates controlled in Y model, character
+#x1: covariates controlled in C model, character
+#init: initial values for parameters, numeric
 #data: dataframe containing outcome, treatment assignment and receipt, cluster/site level variable 
-#col.clinic: column number of cluster/site level variable in the dataframe
-#col.trt: column number of treatment assignment in the dataframe
-#col.D: column number of treatment receipt in the dataframe
-#col.Y: column number of outcome variable in the dataframe
-#niter: maximum number of iteration. suggest 500
-#tol: convergence criteria. suggest 10^-4
-#Share: sharing of random effect. 
+#col.clinic: column number of cluster/site level variable in the dataframe, numeric
+#col.trt: column number of treatment assignment in the dataframe, numeric
+#col.D: column number of treatment receipt in the dataframe, numeric
+#col.Y: column number of outcome variable in the dataframe, numeric
+#niter: maximum number of iteration, numeric. suggest 500
+#tol: convergence criteria, numeric. suggest 10^-4
+#Share: sharing of random effect, numeric. 
   #When r=1, Share=1 means u'=un, Share=2 means u'=uc0 and Share=3 means u'=uc1
   #When r=2, Share=1 means never takers and treatment compliers sharing one random effect, Share=2 means never takers and control compliers sharing one random effect, Share=3 means control compliers and trt compliers sharing one random effect
-#r_prime: reduced number of random effects
+#r_prime: reduced number of random effects, numeric
 
-cace_1side_parallel_lambda <- function(r,k=1,Q,J,data,x0,x1,init,col.clinic,col.trt,col.D,col.Y,niter,tol,Share,r_prime){ 
+cace_1side_parallel_lambda <- function(r=3,k=1,Q,J,data,x0,x1,init,col.clinic,col.trt,col.D,col.Y,niter,tol,Share,r_prime){ 
   start_time <- Sys.time()
   
   #first derivative lnf/a * f(y)
