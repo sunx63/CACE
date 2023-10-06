@@ -46,7 +46,6 @@ registerDoParallel(cores=40)
 miu.etaT=0.2 # P(T=1) \approx 0.5
 r=3 # for one-sided compliance, r=3
 Q=4
-S=1 # never taker's random effect shared
 r_prime=1 # reduced dimension of random effects in Y model
 k=1 # for one-sided compliance, k=1
 n = 80 #n_j
