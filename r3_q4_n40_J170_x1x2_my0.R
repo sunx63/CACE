@@ -40,7 +40,6 @@ registerDoParallel(cores=4)
 miu.etaT=0.2
 r=3
 Q=4
-S=1
 r_prime=3
 k=1
 n <- 40
@@ -54,7 +53,7 @@ lambda.true <- diag(c(1,1,1)) #r=3, no sharing, lambda is identity matrix
 delta.true <- 0.3 
 tau.true <- VechToCovM(c(0.3, 0.25,0.2,0.36, 0.4,0.6), r_prime) 
 
-sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S){
+sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true){
   set.seed(seed)
   alpha <- alpha.true
   gamma <- gamma.true
@@ -232,7 +231,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   # isim is the loop id for simulations. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
   # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
 
-  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=0)$L1o
+  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true)$L1o
   # "L1o" is the dataset with observed/incomplete compliance
 
   init.list <- set_init_noshare(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",col.clinic=1,col.trt=3,col.D=4,col.Y=2)
