@@ -34,7 +34,7 @@ converted.tau.vector
 true <- c(alpha.true,converted.tau.vector,0.5,gamma.true,delta.true)
 
 
-sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S){
+sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true){
   set.seed(seed)
   alpha <- alpha.true
   gamma <- gamma.true
@@ -214,8 +214,9 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
 } #end of function
 
 
-nsim=500
 
+#simulation
+nsim=500
 #y model
 npar.y <- 12
 output_y <- matrix(NA,nrow = nsim,ncol=npar.y)
@@ -229,13 +230,14 @@ colnames(output_c) <- c("r0","r1","r2","delta")
 SE_c <- matrix(NA,nrow = nsim,ncol=npar.c)
 colnames(SE_c) <- c("r0","r1","r2","delta")
 
+options(max.print=100000)
+options(nwarnings=10000)
+
+        
 time1 <- Sys.time()
 for(isim in 1:nsim){
   print(paste0("sim= ", isim))
-  L2 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L2
-  #L2 is a dataset with potential outcomes.
-  #L1o is a dataset with observed outcomes which doesn't include the outcomes from counterfactual scenario.
-  
+  L2 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true)$L2
   tryCatch({
   res <- glmer(Y~ -1 + I(1-Cc) + I((1-trt)*Cc) + I(trt*Cc)+x1+x2+(0+I(1-Cc) + I((1-trt)*Cc) + I(trt*Cc)|clinic), 
                data=L2, family=binomial)
@@ -257,10 +259,9 @@ for(isim in 1:nsim){
 time2 <- Sys.time()
 print(time2-time1)
 
-# estimation
 for(isim in 1:nsim){
   print(paste0("sim= ", isim))
-  L1 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L1
+  L1 <- sim_x1x2_2level(seed = isim, r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true)$L1
   tryCatch({
     #c model
     res.c <- glmer(Cc~ x1+x2+(1|clinic), 
@@ -272,10 +273,9 @@ for(isim in 1:nsim){
     
   }, error=function(e){print(warnings())})
 }
-#2 sims did not converge
 
 #results
-
+#setwd("/Users/elly/Documents/VCU/RA/NR/eassist/incomplete/sim/2023-9-18")
 output <- cbind(output_y,output_c)
 SE <- cbind(SE_y, SE_c)
 write.csv(output,"output_potential_n40.csv", row.names = F)
@@ -283,13 +283,10 @@ write.csv(SE,"SE_potential_n40.csv", row.names = F)
 
 est.potential <- round(apply(output,2,mean),3)
 est.potential
-#an    ac0    ac1     a1     a2  tau11  tau12  tau13  tau22  tau23  tau33   cace     r0     r1     r2  delta 
-#0.504  0.702  1.206 -0.502  1.001  0.495  0.339  0.535  0.247  0.376  0.604  0.505  0.998 -0.501  0.499  0.293
 
 ave.se <- round(apply(na.omit(SE),2,mean),3)
 ave.se
-#an   ac0   ac1    a1    a2 tau11 tau12 tau13 tau22 tau23 tau33  cace    r0    r1    r2 delta 
-#0.073 0.060 0.079 0.022 0.042 0.091 0.002 0.002 0.072 0.003 5.108 0.059 0.069 0.029 0.057 0.065
+
 
 cp.fun <- function(miuhat,se,miu){ #generate coverage probability
   upper <- miuhat+1.96*se
