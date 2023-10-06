@@ -225,22 +225,22 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   # estimation
   res <- cace_1side_parallel_lambda(r=r,k=k,Q=4,J=J,data=L1o,x0=c("x1","x2"),x1=c("x1","x2"),init = init, col.clinic=1,col.trt=3,col.D=4,col.Y=2, 
                                     niter=niter,tol=tol,Share=1,r_prime=1)
-  # r: full dimension of random effects in Y model. r=3 for one-sided noncompliance.
-  # k: full dimension of random effects in C model. k=1 for one-sided noncompliance.
-  # Q: number of abscissas for AGHQ
-  # J: number of sites
+  # r: full dimension of random effects in Y model, numeric. r=3 for one-sided noncompliance.
+  # k: full dimension of random effects in C model, numeric. k=1 for one-sided noncompliance.
+  # Q: number of abscissas for AGHQ, numeric
+  # J: number of sites, numeric
   # data: dataset
-  # x0: covariates controlled in Y model
-  # x1: covariates controlled in C model
-  # init: intial values
-  # col.clinic: column# of site/cluster level variable
-  # col.trt: column# of treatment assignment
-  # col.D: column# of treatment receipt
-  # col.Y: column# of outcome
-  # niter: # of iteration. program will stop if reaches niter specified. 300 is enough for e-assist study.
-  # tol: tolerance for L2 norm. default is 10^-4
-  # Share: sharing method. when r=1, Share=1, 2, 3 means never taker's, control complier's and treatment complier's random effect is shared among three groups respectively
-  # r_prime: reduced dimension of random effects after sharing in Y model. when r=1, r_prime is 1, indicating one random effect is shared in Y model.
+  # x0: covariates controlled in Y model, character
+  # x1: covariates controlled in C model, character
+  # init: intial values, numeric
+  # col.clinic: column# of site/cluster level variable, numeric
+  # col.trt: column# of treatment assignment, numeric
+  # col.D: column# of treatment receipt, numeric
+  # col.Y: column# of outcome, numeric
+  # niter: # of iteration. program will stop if reaches niter specified, numeric. 300 is enough for e-assist study.
+  # tol: tolerance for L2 norm, numeric. default is 10^-4
+  # Share: sharing method, numeric. when r=1, Share=1, 2, 3 means never taker's, control complier's and treatment complier's random effect is shared among three groups respectively
+  # r_prime: reduced dimension of random effects after sharing in Y model, numeric. when r=1, r_prime is 1, indicating one random effect is shared in Y model.
 
 saveRDS(res,file = "r1_eassist_x1x2_isim.rds")
 
