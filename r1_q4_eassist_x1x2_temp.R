@@ -41,7 +41,7 @@ registerDoParallel(cores=40)
 miu.etaT=0.2 # P(T=1) \approx 0.5
 r=3 # for one-sided compliance, r=3
 Q=4
-S=1 # never taker's random effect shared
+
 r_prime=1 # reduced dimension of random effects in Y model
 k=1 # for one-sided compliance, k=1
 physician_order=readRDS("physician_order.rds") 
@@ -56,7 +56,7 @@ lambda.true <- c(1,0.7,1.1)
 delta.true <- 0.3 
 tau.true <- 0.5 
 
-sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S){
+sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true){
   set.seed(seed)
   alpha <- alpha.true
   gamma <- gamma.true
@@ -199,7 +199,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   # isim is the loop id for simulations. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
   # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
 
-  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, physician_order, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1)$L1o
+  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, physician_order, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true)$L1o
   #L1o is the dataset of a multisite trial with e-assist sample size with observed/incomplete compliance
 
   # Generate initial values for the following algorithm
@@ -239,7 +239,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   # col.Y: column# of outcome
   # niter: # of iteration. program will stop if reaches niter specified. 300 is enough for e-assist study.
   # tol: tolerance for L2 norm. default is 10^-4
-  # Share: sharing method. when r=1, S=1, 2, 3 means never taker's, control complier's and treatment complier's random effect is shared among three groups respectively
+  # Share: sharing method. when r=1, Share=1, 2, 3 means never taker's, control complier's and treatment complier's random effect is shared among three groups respectively
   # r_prime: reduced dimension of random effects after sharing in Y model. when r=1, r_prime is 1, indicating one random effect is shared in Y model.
 
 saveRDS(res,file = "r1_eassist_x1x2_isim.rds")
