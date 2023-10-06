@@ -15,7 +15,6 @@ source("MtoVech.R")
 ##fit random coefficient model 
 miu.etaT=0.2
 r=3
-S=1
 r_prime=1
 k=1
 n=40
