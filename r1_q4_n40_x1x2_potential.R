@@ -1,4 +1,4 @@
-#2023-9-18
+#2024-3-15
 #potential outcomes
 
 rm(list=ls())
@@ -46,31 +46,22 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 0.3540  0.4652  0.4982  0.5011  0.5339  0.6818
   
-  etaT=rnorm(J,miu.etaT,0.2) #
-  piT=1/(1+exp(-etaT)) # P(T=1), constant within practice j
-  summary(piT)   
-  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  # 0.3540  0.4652  0.4982  0.5011  0.5339  0.6818
-  
-  id=T=rep(0,N)      
+ id=T=rep(0,N)      
   
   for (j in 1:J) {
     id[((j-1)*n+1):(j*n)] = j     # school ID
     T[((j-1)*n+1):(j*n)] = rbinom(n,1,piT[j]) # T~Bernoulli(piT[j])
   }
   
-  x1 <- round(rnorm(N,1,1),4)
+  x1 <- rnorm(N,1,1)
   x2 <- rbinom(N,1,0.65)
   
   #simulate C
-  tau=delta.true  # var(delta)=tau 
-  L=sqrt(tau)    
-  
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
   Xc <- cbind(rep(1,N), x1, x2)
   
-  b1 <- L * rnorm(J,0,1)
+  b1 <- rnorm(J,0,sd=sqrt(delta.true))
   b2 <- list()
   for(j in 1:J){
     b2[[j]] <- rep(b1[j],n)
