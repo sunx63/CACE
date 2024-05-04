@@ -1,8 +1,8 @@
 #2023-5-18
 #simulate population model when r=1 and estimate with model r=1
-#dataset has 80 observations per site and 65 sites in total
+#dataset has n=80 observations per site and J=65 sites in total. For example, 80 patients nested within a clinic or physician or 80 students in a school.
 #outcome variable Y is partially observed with 5% missing rate
-#this is observed data, not the one with potential outcomes
+#this simulation script doesn't simulate potential outcomes, and only one outcome is simulated.
 
 rm(list=ls())
 
@@ -72,6 +72,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   summary(piT)   
   #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 0.3540  0.4652  0.4982  0.5011  0.5339  0.6818
+  
   id=T=rep(0,N)      # id, T, etaY, Y
   
   for (j in 1:J) {
@@ -79,17 +80,17 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
     T[((j-1)*n+1):(j*n)] = rbinom(n,1,piT[j]) # T~Bernoulli(piT[j])
   }
 
-  x1 <- round(rnorm(N,1,1),4)
+  x1 <- rnorm(N,1,1),4
   x2 <- rbinom(N,1,0.65)
   
   #simulate C
-  tau=delta.true  # var(delta)=tau 
-  L=sqrt(tau)                       
+  delta=delta.true  
+
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
   Xc <- cbind(rep(1,N), x1, x2)
   
-  b1 <- L * rnorm(J,0,1)
+  b1 <-  rnorm(J,0,sqrt(delta))
   b2 <- list()
   for(j in 1:J){
     b2[[j]] <- rep(b1[j],n)
