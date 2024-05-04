@@ -1,5 +1,6 @@
 #2023-9-26
-#simulate r=3 observed data, C partially missing, Y has no missing.
+#simulate three-dimensioanl fully-observed Y, C partially missing.
+#simulate J=170 sites and n=40 observations nested within 1 site.
 
 rm(list=ls())
 #setwd("/Users/elly/Documents/VCU/RA/NR/eassist/incomplete/script/missy")
@@ -40,7 +41,7 @@ registerDoParallel(cores=4)
 miu.etaT=0.2
 r=3
 Q=4
-r_prime=3
+r_prime=3 #three-dimensional Y model
 k=1
 n <- 40
 J=170
@@ -61,32 +62,27 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   
   #simulate T
   etaT=rnorm(J,miu.etaT,0.2) #
-  piT=1/(1+exp(-etaT)) # P(T=1), constant within practice j
-  summary(piT)   
-  
-  etaT=rnorm(J,miu.etaT,0.2) #
-  piT=1/(1+exp(-etaT)) # P(T=1), constant within practice j
+  piT=1/(1+exp(-etaT)) # P(T=1), constant within site j
   summary(piT)   
   
   id=T=rep(0,N)      
   
   for (j in 1:J) {
-    id[((j-1)*n+1):(j*n)] = j     # school ID
+    id[((j-1)*n+1):(j*n)] = j     # site ID
     T[((j-1)*n+1):(j*n)] = rbinom(n,1,piT[j]) # T~Bernoulli(piT[j])
   }
   
-  x1 <- round(rnorm(N,1,1),4)
+  x1 <- rnorm(N,1,1)
   x2 <- rbinom(N,1,0.65)
   
   #simulate C
-  tau=delta.true  # var(delta)=tau 
-  L=sqrt(tau)    
-  
+  delta=delta.true 
+ 
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
   Xc <- cbind(rep(1,N), x1, x2)
   
-  b1 <- L * rnorm(J,0,1)
+  b1 <-  rnorm(J,0,sqrt(delta))
   b2 <- list()
   for(j in 1:J){
     b2[[j]] <- rep(b1[j],n)
@@ -160,7 +156,6 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   summary(Y)
   #mean=0.69
   
-  
   D=rep(0,N)  # set all D=0
   
   D[T*C[,2]==1]=1 # set D=1 of compliers assigned to T=1
@@ -232,7 +227,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
 
   L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true)$L1o
-  # "L1o" is the dataset with observed/incomplete compliance
+  # "L1o" is the dataset with incomplete compliance
 
   init.list <- set_init_noshare(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",col.clinic=1,col.trt=3,col.D=4,col.Y=2)
   # generate initial values
