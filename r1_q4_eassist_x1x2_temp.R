@@ -1,5 +1,5 @@
 #2022-11-29
-#simulate e-assist data, J=170, number of patients varies from 1 to 44 according to the real study. 
+#simulate e-assist data, J=170, number of patients nested within a physician varies from 1 to 44 according to the real study. 
 #The patient distribution across physicians is stored in physician_order.rds. 
 
 rm(list=ls())
