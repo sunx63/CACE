@@ -88,18 +88,18 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   }
   id <- unlist(id)
   
-  x1 <- round(rnorm(N,1,1),4)
+  x1 <- rnorm(N,1,1)
   x2 <- rbinom(N,1,0.65)
   
   #simulate C
-  tau=delta.true  # var(delta)=tau 
+  delta=delta.true 
   L=sqrt(tau)    
   
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
   Xc <- cbind(rep(1,N), x1, x2)
   
-  b1 <- L * rnorm(J,0,1)
+  b1 <-  rnorm(J,0,sqrt(delta)) #delta is one-dimensional
   b2 <- list()
   for(j in 1:J){
     b2[[j]] <- rep(b1[j],physician_order[j])
