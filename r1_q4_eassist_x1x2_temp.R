@@ -93,7 +93,6 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, physician_order, J, alpha.true, g
   
   #simulate C
   delta=delta.true 
-  L=sqrt(tau)    
   
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
