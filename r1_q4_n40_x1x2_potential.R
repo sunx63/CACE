@@ -10,7 +10,7 @@ library(merDeriv) #vcov()
 source("VechToCovM.R")
 source("MtoVech.R")
 
-#simulation
+#simulate n patients nested within J physicians/clinics. Users can change n or J per study purpose.
 
 ##fit random coefficient model 
 miu.etaT=0.2
