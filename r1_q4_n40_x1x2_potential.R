@@ -56,7 +56,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   x2 <- rbinom(N,1,0.65)
   
   #simulate C
-  delta=delta.true  # var(delta)=tau 
+  delta=delta.true 
   
   etaC=rep(0,N)  # etaC=r+b  compliance model
   
