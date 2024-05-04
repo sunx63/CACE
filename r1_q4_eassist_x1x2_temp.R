@@ -1,5 +1,6 @@
 #2022-11-29
-#simulate pop model r=1 and 2 and estimate with model r=1 or 2
+#simulate e-assist data, J=170, number of patients varies from 1 to 44 according to the real study. 
+#The patient distribution across physicians is stored in physician_order.rds. 
 
 rm(list=ls())
 #setwd("/Users/elly/Documents/VCU/RA/NR/eassist/incomplete/script/lambda_NR")
