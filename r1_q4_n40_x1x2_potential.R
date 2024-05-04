@@ -32,7 +32,6 @@ converted.tau.vector <- MtoVech(converted.tau, 3)
 converted.tau.vector
 true <- c(alpha.true,converted.tau.vector,0.5,gamma.true,delta.true)
 
-
 sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true){
   set.seed(seed)
   alpha <- alpha.true
