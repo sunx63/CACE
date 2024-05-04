@@ -1,5 +1,6 @@
 #2023-9-18
-#potential outcomes
+#simulate both potential outcomes when T=0 and 1 for a subject 
+#simulate J physicians/clinics and n subjects/patients nested within one physician/clinic. Users can change n or J per study purpose.
 
 rm(list=ls())
 
@@ -9,8 +10,6 @@ library(merDeriv) #vcov()
 
 source("VechToCovM.R")
 source("MtoVech.R")
-
-#simulate n patients nested within J physicians/clinics. Users can change n or J per study purpose.
 
 ##fit random coefficient model 
 miu.etaT=0.2
@@ -107,8 +106,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   for (j in 1:J){
     u[j,] = t(Lbeta %*% rnorm(3,0,1))
   }
-  
-
+ 
   u1 = u[rep(seq_len(nrow(u)), each = n),]
   
   Xy = cbind(x1,x2)
@@ -136,8 +134,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   
   summary(Y)
   #mean=0.69
-  
-  
+   
   D=rep(0,N)  # set all D=0
   
   D[T*C[,2]==1]=1 # set D=1 of compliers assigned to T=1
@@ -203,7 +200,6 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   
   return(list(L1=L1,L1o=L1o, L2=L2_long))
 } #end of function
-
 
 
 #simulation
@@ -314,7 +310,3 @@ for(i in 1:ncol(output)){
 r1.potential <- cbind(true,est.potential,ave.se, relative.bias, sdhat, mse, cp)
 colnames(r1.potential) <- c("true","est", "se", "% bias", "sd", "mse", "CP")
 write.csv(r1.potential, file = "r1_n40_potential_results.csv")
-
-
-
-
