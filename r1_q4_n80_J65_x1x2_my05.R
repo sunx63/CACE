@@ -60,7 +60,7 @@ delta.true <- 0.3 #raise from 0.05
 tau.true <- 0.5 # raise from 0.2
 
 #function to simulate data
-sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S, missrate){
+sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, missrate){
   set.seed(seed)
   alpha <- alpha.true
   gamma <- gamma.true
@@ -194,7 +194,7 @@ sim_x1x2_2level <- function(seed, r, miu.etaT, n, J, alpha.true, gamma.true, lam
   # isim is the loop id for simulations. isim goes from 1 to 500. Need a unix script to run multiple r simulations on computing clusters
   # if users just run a simulation, just manually change isim in the script to 1 or 2 or any numeric number. There are several locations of isim in the script
   
-  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, S=1, missrate=0.5)$L1o
+  L1o <- sim_x1x2_2level(seed = (isim), r=r_prime, miu.etaT, n, J, alpha.true, gamma.true, lambda.true, tau.true, delta.true, missrate=0.5)$L1o
   #L1o is the dataset of a multisite trial with e-assist sample size with observed/incomplete compliance
 
   init.list <- set_init(L1o,r=3,side = 1,C~x1+x2+(1|clinic), Y~x1+x2+(1|clinic),"id","pmm",r_prime,col.clinic=1,col.trt=3,col.D=4,col.Y=2)
